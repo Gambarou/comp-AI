@@ -32,7 +32,7 @@ export const ChatHeader = ({
       await axios.delete(`/api/companion/${companion.id}`)
 
       toast({
-        description: "Success"
+        description: "Successfully deleted the companion"
       });
 
       router.refresh();

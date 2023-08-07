@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Sparkles } from "lucide-react"
 import { Poppins } from "next/font/google"
 import Link from "next/link"
@@ -9,13 +10,31 @@ import { MobileSidebar } from "./mobile-sidebar"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
+import { useProModal } from "@/hooks/use-pro-modal"
 
 const font = Poppins({
   weight: "600",
   subsets: ["latin"]
 })
 
-export const Navbar = () => {
+interface NavBarProps {
+  isPro: boolean;
+}
+
+export const Navbar = ({
+  isPro
+}: NavBarProps) => {
+  const proModal = useProModal();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <div 
       className="
@@ -34,7 +53,7 @@ export const Navbar = () => {
       "
     >
       <div className="flex items-center">
-        <MobileSidebar />
+        <MobileSidebar isPro={isPro} />
         <Link href="/">
           <h1 
             className={cn("hidden md:block text-xl md:text-3xl font-bold text-primary", font.className)}>
@@ -43,10 +62,12 @@ export const Navbar = () => {
         </Link>
       </div>
       <div className="flex items-center gap-x-3">
-        <Button variant="premium" size="sm">
-          Upgrade
-          <Sparkles className="h-4 w-4 fill-white text-white ml-2" />
-        </Button>
+        {!isPro ? (
+          <Button onClick={proModal.onOpen} variant="premium" size="sm">
+            Upgrade
+            <Sparkles className="h-4 w-4 fill-white text-white ml-2" />
+          </Button>
+        ) : null}
         <ModeToggle />
         <UserButton afterSignOutUrl="/" />
       </div>
